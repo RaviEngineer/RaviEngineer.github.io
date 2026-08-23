@@ -1,0 +1,614 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- ============================================================
+     EDIT THESE FOUR LINES ONCE, BEFORE YOU PUBLISH
+     ============================================================ -->
+<title>RVC Holdings — Energy retail, real estate, data centres and payments</title>
+<meta name="description" content="Operator-led holding company across energy retail, real estate, data centres, payments, digital assets, hospitality and healthcare services.">
+<link rel="canonical" href="https://raviengineer.github.io/">
+<meta property="og:url" content="https://raviengineer.github.io/">
+<!-- ============================================================ -->
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#101B2D">
+<meta name="author" content="Ravi Chaudhari">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="RVC Holdings">
+<meta property="og:title" content="RVC Holdings">
+<meta property="og:description" content="An operator-led holding company across energy retail, real estate, data centres, payments, digital assets, hospitality and healthcare services.">
+<meta property="og:image" content="https://raviengineer.github.io/preview.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="RVC Holdings">
+<meta name="twitter:description" content="An operator-led holding company across energy retail, real estate, data centres, payments, digital assets, hospitality and healthcare services.">
+<meta name="twitter:image" content="https://raviengineer.github.io/preview.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%23101B2D'/%3E%3Ctext x='32' y='43' font-family='Georgia,serif' font-size='30' font-weight='700' fill='%23A8763E' text-anchor='middle'%3ER%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23101B2D'/%3E%3Ctext x='32' y='43' font-family='Georgia,serif' font-size='30' font-weight='700' fill='%23A8763E' text-anchor='middle'%3ER%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,300;8..60,400;8..60,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBFAF7; --ink:#101B2D; --slate:#5A6675;
+    --brass:#A8763E; --rule:#DED9CF; --rule-soft:#EBE7DF; --wash:#F3F0E9;
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+    --display:"Archivo",system-ui,-apple-system,sans-serif;
+    --body:"Source Serif 4",Georgia,serif;
+    --pad:clamp(20px,5vw,72px);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);
+       font-size:17px;line-height:1.62;-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  button{font:inherit;color:inherit}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 var(--pad)}
+  :focus-visible{outline:2px solid var(--brass);outline-offset:3px;border-radius:2px}
+  .masthead{position:sticky;top:0;z-index:60;
+    background:color-mix(in srgb,var(--paper) 88%,transparent);
+    backdrop-filter:blur(10px);border-bottom:1px solid var(--rule)}
+  .masthead-in{display:flex;align-items:center;gap:16px;min-height:64px;flex-wrap:wrap}
+  .mark{font-family:var(--display);font-weight:700;font-size:19px;
+        letter-spacing:-0.03em;margin-right:auto}
+  .mark small{display:block;font-family:var(--mono);font-weight:400;font-size:10px;
+        letter-spacing:.16em;text-transform:uppercase;color:var(--slate);margin-top:1px}
+  .ctl{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.12em;
+       text-transform:uppercase;background:none;border:1px solid var(--rule);
+       padding:8px 13px;border-radius:2px;cursor:pointer;
+       transition:border-color .15s,background .15s,color .15s}
+  .ctl:hover{border-color:var(--ink);background:var(--wash)}
+  .ctl[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+  .hero{padding:clamp(56px,10vw,120px) 0 clamp(40px,7vw,76px)}
+  .kicker{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.2em;
+          text-transform:uppercase;color:var(--brass);margin:0 0 22px}
+  h1{font-family:var(--display);font-weight:600;font-size:clamp(38px,7.4vw,78px);
+     line-height:.99;letter-spacing:-.038em;margin:0 0 26px;max-width:15ch}
+  .thesis{font-size:clamp(17px,2.1vw,21px);color:var(--slate);max-width:56ch;margin:0}
+  .section-head{display:flex;align-items:baseline;gap:14px;border-top:1px solid var(--ink);
+                padding-top:12px;margin-bottom:4px}
+  .section-head h2{font-family:var(--mono);font-size:11px;font-weight:600;
+                   letter-spacing:.2em;text-transform:uppercase;margin:0}
+  .section-head .note{font-family:var(--mono);font-size:11px;letter-spacing:.08em;
+                      color:var(--slate);margin-left:auto;text-transform:uppercase}
+  .board{border-bottom:1px solid var(--rule)}
+  .row{border-bottom:1px solid var(--rule-soft);opacity:0;transform:translateY(9px);
+       animation:settle .5s cubic-bezier(.2,.7,.3,1) forwards}
+  .row:last-child{border-bottom:0}
+  @keyframes settle{to{opacity:1;transform:none}}
+  .row-btn{width:100%;background:none;border:0;text-align:left;cursor:pointer;
+           display:grid;grid-template-columns:74px 1fr auto 20px;align-items:center;
+           gap:16px;padding:19px 4px;transition:background .16s}
+  .row-btn:hover{background:var(--wash)}
+  .ticker{font-family:var(--mono);font-size:11px;font-weight:600;
+          letter-spacing:.14em;color:var(--brass)}
+  .row-name{font-family:var(--display);font-weight:600;font-size:clamp(19px,2.6vw,25px);
+            letter-spacing:-.022em;line-height:1.16}
+  .row-one{display:block;font-family:var(--body);font-weight:400;font-size:14.5px;
+           color:var(--slate);letter-spacing:0;margin-top:3px}
+  .count{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.13em;
+         text-transform:uppercase;color:var(--slate);white-space:nowrap}
+  .count[data-empty="1"]{visibility:hidden}
+  .chev{font-family:var(--mono);font-size:13px;color:var(--slate);
+        transition:transform .22s;justify-self:end}
+  .row.open .chev{transform:rotate(90deg)}
+  .detail{display:none;padding:2px 4px 30px}
+  .row.open .detail{display:block}
+  .detail-grid{display:grid;grid-template-columns:74px 1fr;gap:16px}
+  .detail-body{max-width:62ch}
+  .field{margin-bottom:24px}
+  .field:last-child{margin-bottom:0}
+  .field p{margin:0}
+  .field-label{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.16em;
+               text-transform:uppercase;color:var(--brass);margin:0 0 6px}
+  .assets{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule-soft)}
+  .asset{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:baseline;
+         padding:11px 0;border-bottom:1px solid var(--rule-soft)}
+  .asset .a-name{font-family:var(--display);font-weight:500;font-size:16px;letter-spacing:-.01em}
+  .asset .a-note{display:block;font-size:14px;color:var(--slate);margin-top:2px}
+  .asset .a-year{font-family:var(--mono);font-size:11px;color:var(--slate);
+                 letter-spacing:.08em;white-space:nowrap}
+  .assets-empty{font-size:15px;color:var(--slate);padding:12px 0 0;margin:0}
+  .block{padding:clamp(52px,8vw,92px) 0 0}
+  .block-body{display:grid;grid-template-columns:74px 1fr;gap:16px;padding-top:26px}
+  .block-body .prose{max-width:60ch}
+  .block-body .prose p{margin:0 0 18px}
+  .block-body .prose p:last-child{margin-bottom:0}
+  .contact-list{display:grid;gap:2px;padding-top:26px}
+  .contact-row{display:grid;grid-template-columns:74px 1fr;gap:16px;padding:14px 0;
+               border-bottom:1px solid var(--rule-soft);align-items:baseline}
+  .contact-row .k{font-family:var(--mono);font-size:10px;font-weight:500;
+                  letter-spacing:.16em;text-transform:uppercase;color:var(--slate)}
+  .contact-row .v{font-family:var(--display);font-size:18px;font-weight:500;letter-spacing:-.01em}
+  footer{margin-top:clamp(56px,9vw,110px);border-top:1px solid var(--ink);
+         padding:20px 0 48px;font-family:var(--mono);font-size:10.5px;letter-spacing:.11em;
+         text-transform:uppercase;color:var(--slate);display:flex;gap:16px;flex-wrap:wrap}
+  footer .right{margin-left:auto}
+  body.editing [data-bind]{outline:1px dashed var(--rule);outline-offset:4px;
+                           border-radius:2px;min-width:2ch;min-height:1em}
+  body.editing [data-bind]:focus{outline:2px solid var(--brass);background:#fff}
+  body.editing [data-bind]:empty::before{content:attr(data-placeholder);color:#B9B3A6}
+  body.editing .row-btn{cursor:default}
+  body.editing .chev{display:none}
+  .row-tools{display:none;gap:8px;padding:0 4px 22px 90px;flex-wrap:wrap}
+  body.editing .row-tools{display:flex}
+  .asset-tools{display:none}
+  body.editing .asset-tools{display:inline-flex;gap:6px}
+  .tool{font-family:var(--mono);font-size:10px;letter-spacing:.11em;text-transform:uppercase;
+        background:none;border:1px solid var(--rule);padding:6px 10px;border-radius:2px;
+        cursor:pointer;color:var(--slate)}
+  .tool:hover{border-color:var(--ink);color:var(--ink)}
+  .tool.danger:hover{border-color:#9B3A2E;color:#9B3A2E}
+  .tool.primary{border-color:var(--ink);color:var(--ink)}
+  .tool.primary:hover{background:var(--ink);color:var(--paper)}
+  .editbar{display:none;gap:8px;flex-wrap:wrap;padding:14px 0 0;align-items:center}
+  body.editing .editbar{display:flex}
+  .editbar .hint{font-family:var(--mono);font-size:10px;letter-spacing:.09em;
+                 text-transform:uppercase;color:var(--slate);margin-left:auto}
+  .toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,14px);
+         background:var(--ink);color:var(--paper);font-family:var(--mono);font-size:11px;
+         letter-spacing:.12em;text-transform:uppercase;padding:11px 20px;border-radius:2px;
+         opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:90}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+  .empty{padding:44px 4px;color:var(--slate);font-size:15.5px}
+  @media (max-width:640px){
+    .row-btn{grid-template-columns:60px 1fr;gap:12px}
+    .row-btn .count,.chev{display:none}
+    .detail-grid,.block-body,.contact-row{grid-template-columns:1fr}
+    .detail-grid>.ticker,.block-body>.ticker{display:none}
+    .row-tools{padding-left:4px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+    .row{opacity:1;transform:none}
+  }
+  @media print{
+    .masthead,.editbar,.row-tools,.toast,.chev{display:none!important}
+    .detail{display:block!important}
+    body{font-size:12pt}
+  }
+</style>
+</head>
+<body>
+<header class="masthead">
+  <div class="wrap masthead-in">
+    <div class="mark">
+      <span data-bind="brand.name" data-placeholder="Company name"></span>
+      <small data-bind="brand.tag" data-placeholder="Tagline"></small>
+    </div>
+    <button class="ctl" id="editToggle" aria-pressed="false" hidden>Edit content</button>
+  </div>
+  <div class="wrap editbar">
+    <button class="tool" id="addHolding">+ Add vertical</button>
+    <button class="tool primary" id="publishBtn">Download site file</button>
+    <button class="tool danger" id="revertBtn">Discard my edits</button>
+    <button class="tool" id="lockBtn">Lock editing</button>
+    <span class="hint" id="draftHint"></span>
+  </div>
+</header>
+<main class="wrap">
+  <section class="hero">
+    <p class="kicker" data-bind="hero.kicker" data-placeholder="Eyebrow"></p>
+    <h1 data-bind="hero.headline" data-placeholder="Headline"></h1>
+    <p class="thesis" data-bind="hero.thesis" data-placeholder="Opening paragraph"></p>
+  </section>
+  <section>
+    <div class="section-head">
+      <h2>Portfolio</h2>
+      <span class="note" id="boardNote"></span>
+    </div>
+    <div class="board" id="board"></div>
+  </section>
+  <section class="block">
+    <div class="section-head"><h2>Operator</h2></div>
+    <div class="block-body">
+      <div class="ticker">WHO</div>
+      <div class="prose" id="operator"></div>
+    </div>
+  </section>
+  <section class="block">
+    <div class="section-head"><h2>Contact</h2></div>
+    <div class="contact-list">
+      <div class="contact-row"><div class="k">Email</div>
+        <div class="v" data-bind="contact.email" data-placeholder="you@example.com"></div></div>
+      <div class="contact-row"><div class="k">Based</div>
+        <div class="v" data-bind="contact.based" data-placeholder="City, Country"></div></div>
+      <div class="contact-row"><div class="k">Open to</div>
+        <div class="v" data-bind="contact.open" data-placeholder="What you want to hear about"></div></div>
+    </div>
+  </section>
+  <footer>
+    <span data-bind="footer.left" data-placeholder="Footer left"></span>
+    <span class="right" data-bind="footer.right" data-placeholder="Footer right"></span>
+  </footer>
+</main>
+<div class="toast" id="toast">Saved</div>
+<script id="seed" type="application/json">
+{
+  "brand": { "name": "RVC Holdings", "tag": "Operator-led · Ontario, Canada" },
+  "hero": {
+    "kicker": "Holding company",
+    "headline": "Infrastructure people rely on without thinking about it.",
+    "thesis": "Fuel, buildings, beds, care, compute, and the rails money moves on. Eight verticals held under one operator, chosen because they share a common trait: they are unglamorous, they are essential, and they reward people who understand how the plumbing actually works."
+  },
+  "holdings": [
+    { "code":"FUEL", "name":"Energy Retail",
+      "one":"Gas stations and convenience stores, bought on verified numbers.",
+      "thesis":"Fuel and c-store sites are cash-generating infrastructure that most sellers price on story rather than substance. The margin lives in fuel gallons, category mix, and average ticket — not in the pitch deck.",
+      "approach":"Nothing moves without twenty-four months of category-level sales, transaction counts, fuel volumes, and invoice-versus-retail margin. Real estate is underwritten separately from the business.",
+      "assets": [] },
+    { "code":"LAND", "name":"Real Estate",
+      "one":"Owning the ground underneath the operating businesses.",
+      "thesis":"Every other vertical here sits on real property. Owning the land alongside the business converts rent from a permanent cost into equity, and gives the operating company a landlord that wants it to survive.",
+      "approach":"Paired acquisitions where the property value stands on its own, plus selective standalone commercial holdings in secondary markets.",
+      "assets": [] },
+    { "code":"GRID", "name":"Data Centres",
+      "one":"Colocation capacity built around power, not floor space.",
+      "thesis":"Compute demand is outrunning reliable, well-powered floor space — acutely so in India's growth corridors. Tier III-style colocation with serious solar integration answers two constraints at once: capacity and energy cost.",
+      "approach":"Roughly one megawatt to start, sited where power agreements and state incentives make the economics work. Colocation first, managed services as the tenant base matures.",
+      "assets": [] },
+    { "code":"PAY", "name":"Finance & Payments",
+      "one":"Built on nine years inside the settlement layer of Canadian banking.",
+      "thesis":"Most people never see the machinery that makes money arrive when it is supposed to. Understanding it — ISO 20022, Real-Time Rail, SWIFT, reconciliation, settlement windows — is the foundation everything else in this portfolio is built on.",
+      "approach":"Deep specialisation in payment modernisation, developed at a direct settlement participant to Payments Canada and at two major banks.",
+      "assets": [] },
+    { "code":"DIGI", "name":"Digital Assets",
+      "one":"Stablecoin settlement rails behind a plain fiat experience.",
+      "thesis":"Cross-border remittance is slow and expensive because of the correspondent banking chain, not because of the customer. Move the settlement layer and the cost structure changes — while the sender and receiver only ever see normal money in and normal money out.",
+      "approach":"Boring fiat interface, modern settlement underneath. Regulated corridors, licensed partners, and no exposure the end user has to think about.",
+      "assets": [] },
+    { "code":"AI", "name":"AI Solutions",
+      "one":"Narrow tools for industries that still run on spreadsheets and paper.",
+      "thesis":"The opportunity is not another general assistant. It is reconciliation, document handling, and back-office judgment inside regulated industries — exactly where a wrong answer is expensive and where domain knowledge is the moat.",
+      "approach":"Tools built against real operating problems inside the portfolio first, then offered outward once they have earned their keep.",
+      "assets": [] },
+    { "code":"STAY", "name":"Hospitality",
+      "one":"Independent motels on routes that are not going away.",
+      "thesis":"Roadside lodging is unglamorous, owner-operated, and frequently mismanaged. Clean rooms, honest pricing, and a booking system that actually works remain a genuine competitive advantage across much of this market.",
+      "approach":"Secondary-market properties on stable traffic corridors, operated directly rather than handed to a management company.",
+      "assets": [] },
+    { "code":"CARE", "name":"Healthcare Services",
+      "one":"Care delivery infrastructure, on a long horizon.",
+      "thesis":"Healthcare rewards patient capital and punishes anyone who treats it like a normal operating business. It belongs in a portfolio built around essential infrastructure — approached with the seriousness the sector demands.",
+      "approach":"Regulatory and reimbursement groundwork first, partnerships with clinical operators second, capital last.",
+      "assets": [] }
+  ],
+  "operator": [
+    "Ravi Chaudhari — RV — is a business systems analyst with nine-plus years in payments and financial services, working at a direct settlement participant to Payments Canada and at CIBC and Citizens Bank.",
+    "The training is in the plumbing: ISO 20022 message design, Real-Time Rail, reconciliation, settlement windows, and the unglamorous work of making money arrive when it is supposed to. The degree is in petroleum engineering, which is a longer story.",
+    "This portfolio is what happens when someone who spent a decade inside other people's systems starts building their own — across the physical infrastructure people drive past every day and the digital infrastructure they never see at all."
+  ],
+  "contact": { "email":"ravi.cpe18@gmail.com", "based":"Collingwood, Ontario", "open":"Brokers, sellers, operators, and co-investors" },
+  "footer": { "left":"© RVC Holdings", "right":"Enquiries welcome" }
+}
+</script>
+<script>
+(function(){
+"use strict";
+var DRAFT_KEY = "rvc-portfolio-draft";
+var OWNER_KEY = "rvc-portfolio-owner";
+/* ==================================================================
+   YOUR PRIVATE EDIT WORD — change this before you publish.
+   To edit the site, visit:  https://raviengineer.github.io/#rvc-brass-ledger-2026
+   The edit controls stay completely hidden for everyone else.
+   ================================================================== */
+var EDIT_WORD = "rvc-brass-ledger-2026";
+/* ================================================================== */
+var WORDS = ["Zero","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten","Eleven","Twelve"];
+var PUBLISHED = JSON.parse(document.getElementById("seed").textContent);
+var state = clone(PUBLISHED);
+var editing = false;
+var openRows = {};
+var hasDraft = false;
+var saveTimer = null;
+function clone(o){ return JSON.parse(JSON.stringify(o)); }
+function esc(s){
+  return String(s == null ? "" : s)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+/* ---------- owner unlock (private) ---------- */
+function isOwner(){
+  try{ return localStorage.getItem(OWNER_KEY) === "1"; }catch(e){ return false; }
+}
+function unlockOwner(){
+  try{ localStorage.setItem(OWNER_KEY,"1"); }catch(e){}
+  document.getElementById("editToggle").hidden = false;
+}
+function lockOwner(){
+  try{ localStorage.removeItem(OWNER_KEY); }catch(e){}
+  editing = false;
+  document.body.classList.remove("editing");
+  var t = document.getElementById("editToggle");
+  t.hidden = true;
+  t.setAttribute("aria-pressed","false");
+  t.textContent = "Edit content";
+  openRows = {};
+  render();
+  toast("Editing locked");
+}
+function checkUnlock(){
+  var frag = (location.hash || "").replace(/^#/,"").trim().toLowerCase();
+  if(frag && frag === String(EDIT_WORD).trim().toLowerCase()){
+    unlockOwner();
+    /* clear the word from the address bar so it is not left on screen or in history */
+    if(history.replaceState){
+      history.replaceState(null, "", location.pathname + location.search);
+    } else {
+      location.hash = "";
+    }
+    toast("Editing unlocked");
+    return;
+  }
+  if(isOwner()) document.getElementById("editToggle").hidden = false;
+}
+/* ---------- draft persistence (this browser only) ---------- */
+function loadDraft(){
+  try{
+    var raw = localStorage.getItem(DRAFT_KEY);
+    if(!raw) return;
+    var parsed = JSON.parse(raw);
+    state = normalise(parsed);
+    hasDraft = true;
+  }catch(e){ /* corrupt or unavailable — published content stands */ }
+}
+function normalise(d){
+  var s = Object.assign(clone(PUBLISHED), d);
+  if(!Array.isArray(s.holdings)) s.holdings = clone(PUBLISHED.holdings);
+  if(!Array.isArray(s.operator)) s.operator = clone(PUBLISHED.operator);
+  s.holdings.forEach(function(h){ if(!Array.isArray(h.assets)) h.assets = []; });
+  return s;
+}
+function saveDraft(quiet){
+  try{
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(state));
+    hasDraft = true;
+    updateHint();
+    if(!quiet) toast("Draft saved");
+  }catch(e){
+    toast("Could not save draft");
+  }
+}
+function queueSave(){ clearTimeout(saveTimer); saveTimer = setTimeout(function(){ saveDraft(true); }, 700); }
+function updateHint(){
+  document.getElementById("draftHint").textContent =
+    hasDraft ? "Unpublished draft on this device" : "Matches published site";
+}
+/* ---------- path helpers ---------- */
+function getPath(path){
+  var parts = path.split("."), cur = state;
+  for(var i=0;i<parts.length;i++){
+    if(cur == null) return "";
+    cur = cur[/^\d+$/.test(parts[i]) ? Number(parts[i]) : parts[i]];
+  }
+  return cur == null ? "" : cur;
+}
+function setPath(path, value){
+  var parts = path.split("."), cur = state;
+  for(var i=0;i<parts.length-1;i++){
+    cur = cur[/^\d+$/.test(parts[i]) ? Number(parts[i]) : parts[i]];
+    if(cur == null) return;
+  }
+  var last = parts[parts.length-1];
+  cur[/^\d+$/.test(last) ? Number(last) : last] = value;
+}
+/* ---------- render ---------- */
+function render(){
+  var nodes = document.querySelectorAll("[data-bind]");
+  for(var i=0;i<nodes.length;i++){
+    var v = getPath(nodes[i].dataset.bind);
+    if(nodes[i].textContent !== v) nodes[i].textContent = v;
+  }
+  renderBoard();
+  renderOperator();
+  renderNote();
+  applyEditAttrs();
+  updateHint();
+}
+function renderNote(){
+  var n = state.holdings.length;
+  document.getElementById("boardNote").textContent =
+    (WORDS[n] || n) + (n === 1 ? " vertical" : " verticals");
+}
+function assetLine(i, j, a){
+  return '<li class="asset">' +
+      '<span>' +
+        '<span class="a-name" data-bind="holdings.' + i + '.assets.' + j + '.name" data-placeholder="Property or asset name">' + esc(a.name) + '</span>' +
+        '<span class="a-note" data-bind="holdings.' + i + '.assets.' + j + '.note" data-placeholder="Location, size, or short detail">' + esc(a.note) + '</span>' +
+      '</span>' +
+      '<span class="a-year">' +
+        '<span data-bind="holdings.' + i + '.assets.' + j + '.year" data-placeholder="Year">' + esc(a.year) + '</span>' +
+        '<span class="asset-tools"> <button class="tool danger" data-delasset="' + i + '" data-j="' + j + '">Remove</button></span>' +
+      '</span>' +
+    '</li>';
+}
+function renderBoard(){
+  var board = document.getElementById("board");
+  board.innerHTML = "";
+  if(!state.holdings.length){
+    var e = document.createElement("div");
+    e.className = "empty";
+    e.textContent = editing ? "No verticals yet. Use “+ Add vertical” to add the first one."
+                            : "No verticals listed.";
+    board.appendChild(e);
+    return;
+  }
+  state.holdings.forEach(function(h, i){
+    var open = editing || !!openRows[i];
+    var assets = h.assets || [];
+    var row = document.createElement("div");
+    row.className = "row" + (open ? " open" : "");
+    row.style.animationDelay = (i * 55) + "ms";
+    var assetsHtml = assets.length
+      ? '<ul class="assets">' + assets.map(function(a,j){ return assetLine(i,j,a); }).join("") + '</ul>'
+      : (editing ? '<p class="assets-empty">Nothing added yet. Use “+ Add property” below once you acquire one.</p>' : "");
+    var holdingsBlock = (assets.length || editing)
+      ? '<div class="field"><p class="field-label">' +
+        (assets.length ? "Holdings" : "Holdings") + '</p>' + assetsHtml + '</div>'
+      : "";
+    row.innerHTML =
+      '<button class="row-btn" type="button" data-row="' + i + '" aria-expanded="' + open + '">' +
+        '<span class="ticker" data-bind="holdings.' + i + '.code" data-placeholder="CODE">' + esc(h.code) + '</span>' +
+        '<span>' +
+          '<span class="row-name" data-bind="holdings.' + i + '.name" data-placeholder="Vertical name">' + esc(h.name) + '</span>' +
+          '<span class="row-one" data-bind="holdings.' + i + '.one" data-placeholder="One line summary">' + esc(h.one) + '</span>' +
+        '</span>' +
+        '<span class="count" data-empty="' + (assets.length ? 0 : 1) + '">' +
+          assets.length + (assets.length === 1 ? " holding" : " holdings") + '</span>' +
+        '<span class="chev">›</span>' +
+      '</button>' +
+      '<div class="detail"><div class="detail-grid"><div class="ticker"></div><div class="detail-body">' +
+        '<div class="field"><p class="field-label">Thesis</p>' +
+          '<p data-bind="holdings.' + i + '.thesis" data-placeholder="Why this business">' + esc(h.thesis) + '</p></div>' +
+        '<div class="field"><p class="field-label">Approach</p>' +
+          '<p data-bind="holdings.' + i + '.approach" data-placeholder="How you go about it">' + esc(h.approach) + '</p></div>' +
+        holdingsBlock +
+      '</div></div></div>' +
+      '<div class="row-tools">' +
+        '<button class="tool" data-addasset="' + i + '">+ Add property</button>' +
+        '<button class="tool" data-move="' + i + '" data-dir="-1">↑ Up</button>' +
+        '<button class="tool" data-move="' + i + '" data-dir="1">↓ Down</button>' +
+        '<button class="tool danger" data-del="' + i + '">Remove vertical</button>' +
+      '</div>';
+    board.appendChild(row);
+  });
+}
+function renderOperator(){
+  document.getElementById("operator").innerHTML = state.operator.map(function(p,i){
+    return '<p data-bind="operator.' + i + '" data-placeholder="Paragraph">' + esc(p) + '</p>';
+  }).join("");
+}
+function applyEditAttrs(){
+  var nodes = document.querySelectorAll("[data-bind]");
+  for(var i=0;i<nodes.length;i++){
+    if(editing){
+      nodes[i].setAttribute("contenteditable","true");
+      nodes[i].setAttribute("spellcheck","true");
+    } else {
+      nodes[i].removeAttribute("contenteditable");
+      nodes[i].removeAttribute("spellcheck");
+    }
+  }
+}
+/* ---------- events ---------- */
+document.addEventListener("input", function(e){
+  var el = e.target.closest("[data-bind]");
+  if(!el || !editing) return;
+  setPath(el.dataset.bind, el.textContent.trim());
+  queueSave();
+});
+document.addEventListener("keydown", function(e){
+  if(editing && e.key === "Enter" && e.target.closest("[data-bind]")){
+    e.preventDefault();
+    e.target.blur();
+  }
+});
+document.addEventListener("click", function(e){
+  var rowBtn = e.target.closest("[data-row]");
+  if(rowBtn && !editing && !e.target.closest("button.tool")){
+    var i = Number(rowBtn.dataset.row);
+    openRows[i] = !openRows[i];
+    renderBoard(); applyEditAttrs();
+    return;
+  }
+  var add = e.target.closest("[data-addasset]");
+  if(add){
+    var ai = Number(add.dataset.addasset);
+    state.holdings[ai].assets.push({ name:"", note:"", year:"" });
+    render(); saveDraft(true);
+    return;
+  }
+  var da = e.target.closest("[data-delasset]");
+  if(da){
+    var hi = Number(da.dataset.delasset), aj = Number(da.dataset.j);
+    state.holdings[hi].assets.splice(aj,1);
+    render(); saveDraft(true);
+    return;
+  }
+  var mv = e.target.closest("[data-move]");
+  if(mv){
+    var m = Number(mv.dataset.move), d = Number(mv.dataset.dir), n = m + d;
+    if(n < 0 || n >= state.holdings.length) return;
+    var arr = state.holdings, tmp = arr[m];
+    arr[m] = arr[n]; arr[n] = tmp;
+    render(); saveDraft(true);
+    return;
+  }
+  var del = e.target.closest("[data-del]");
+  if(del){
+    var k = Number(del.dataset.del);
+    if(confirm('Remove "' + state.holdings[k].name + '" from the portfolio?')){
+      state.holdings.splice(k,1);
+      openRows = {};
+      render(); saveDraft(true);
+    }
+  }
+});
+document.getElementById("editToggle").addEventListener("click", function(){
+  editing = !editing;
+  document.body.classList.toggle("editing", editing);
+  this.setAttribute("aria-pressed", String(editing));
+  this.textContent = editing ? "Done editing" : "Edit content";
+  if(!editing){ openRows = {}; saveDraft(); }
+  render();
+});
+document.getElementById("addHolding").addEventListener("click", function(){
+  state.holdings.push({ code:"NEW", name:"New vertical",
+    one:"One line on what this is.", thesis:"", approach:"", assets:[] });
+  render(); saveDraft(true);
+});
+document.getElementById("lockBtn").addEventListener("click", function(){
+  if(!confirm("Hide the edit controls on this device? You can unlock again with your edit link.")) return;
+  lockOwner();
+});
+document.getElementById("revertBtn").addEventListener("click", function(){
+  if(!confirm("Discard your local edits and go back to the published content?")) return;
+  try{ localStorage.removeItem(DRAFT_KEY); }catch(e){}
+  state = clone(PUBLISHED);
+  hasDraft = false;
+  openRows = {};
+  render();
+  toast("Edits discarded");
+});
+/* ---------- publish: bake current content into a fresh file ---------- */
+document.getElementById("publishBtn").addEventListener("click", function(){
+  var copy = document.documentElement.cloneNode(true);
+  copy.querySelector("#seed").textContent = "\n" + JSON.stringify(state, null, 2) + "\n";
+  var body = copy.querySelector("body");
+  body.classList.remove("editing");
+  var eds = copy.querySelectorAll("[contenteditable]");
+  for(var i=0;i<eds.length;i++){
+    eds[i].removeAttribute("contenteditable");
+    eds[i].removeAttribute("spellcheck");
+  }
+  var t = copy.querySelector("#editToggle");
+  t.setAttribute("aria-pressed","false");
+  t.setAttribute("hidden","");
+  t.textContent = "Edit content";
+  copy.querySelector("#toast").className = "toast";
+  var html = "<!doctype html>\n" + copy.outerHTML;
+  var blob = new Blob([html], { type:"text/html" });
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "index.html";
+  a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1000);
+  toast("Downloaded index.html");
+});
+function toast(msg){
+  var t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toast._t);
+  toast._t = setTimeout(function(){ t.classList.remove("show"); }, 1900);
+}
+checkUnlock();
+loadDraft();
+state = normalise(state);
+render();
+window.addEventListener("hashchange", checkUnlock);
+})();
+</script>
+</body>
+</html>
