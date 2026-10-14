@@ -1,0 +1,4 @@
+# Files Claude Code uses; keep them off the published website.
+exclude:
+  - CLAUDE.md
+  - tasks/
