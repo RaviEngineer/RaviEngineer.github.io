@@ -5,6 +5,29 @@ const video = $("#video");
 const canvas = $("#preview");
 const ctx = canvas.getContext("2d");
 
+// Phones get far less memory per tab; iPhone Safari silently reloads a page that uses too much.
+const IS_IOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+const IS_MOBILE = IS_IOS || /Android|Mobi/i.test(navigator.userAgent);
+// Above this size the whole-file decode risks running a phone out of memory.
+const QUICK_DECODE_LIMIT = IS_MOBILE ? 60e6 : 500e6;
+
+// Remembers heavy work in progress, so after a memory crash reload we can explain what happened.
+function markBusy(task) {
+  try {
+    if (task) sessionStorage.setItem("reelscribe.busy", task);
+    else sessionStorage.removeItem("reelscribe.busy");
+  } catch {
+    // Storage unavailable (private mode); recovery hint is a nice-to-have.
+  }
+}
+function crashedTask() {
+  try {
+    return sessionStorage.getItem("reelscribe.busy");
+  } catch {
+    return null;
+  }
+}
+
 const FILLERS = new Set(["um", "umm", "uh", "uhh", "uhm", "er", "erm", "ah", "hmm", "hm", "mm", "mhm"]);
 const LANGUAGES = [
   "Hindi", "Marathi", "Gujarati", "Tamil", "Telugu", "Bengali", "Kannada", "Malayalam", "Punjabi",
@@ -584,8 +607,15 @@ function withTimeout(promise, ms) {
 // files make this fail or hang, so it never blocks anything — ensurePcm() falls back.
 let audioJob = null;
 function readAudio(file) {
+  if (file.size > QUICK_DECODE_LIMIT) {
+    // Read the audio by playback instead, when the user taps Generate captions.
+    audioJob = { file, done: true, promise: Promise.resolve(null) };
+    return;
+  }
   $("#txStatus").textContent = "Reading audio from your video…";
-  const promise = withTimeout(decodeAudio(file), Math.max(45000, state.duration * 1000))
+  markBusy("reading");
+  const job = { file, done: false, promise: null };
+  job.promise = withTimeout(decodeAudio(file), Math.max(45000, state.duration * 1000))
     .then((pcm) => {
       if (state.file === file) {
         state.pcm = pcm;
@@ -598,32 +628,37 @@ function readAudio(file) {
       console.warn("Quick audio decode failed; will read audio by playing the video instead.", err);
       if (state.file === file) $("#txStatus").textContent = "";
       return null;
+    })
+    .finally(() => {
+      job.done = true;
+      markBusy(null);
     });
-  audioJob = { file, promise };
+  audioJob = job;
 }
 
+// Must reach captureAudioByPlayback() without awaiting when it can, so playback still counts
+// as part of the user's tap (iPhone Safari blocks audio playback that starts later).
 async function ensurePcm() {
   if (state.pcm) return state.pcm;
   const file = state.file;
-  if (audioJob?.file === file) {
+  if (audioJob?.file === file && !audioJob.done) {
     $("#txStatus").textContent = "Reading audio from your video…";
     const pcm = await audioJob.promise;
     if (pcm) return pcm;
   }
+  if (state.pcm) return state.pcm;
   if (state.file !== file) return null;
   const pcm = await captureAudioByPlayback();
   if (state.file === file) state.pcm = pcm;
   return pcm;
 }
 
-const once = (el, type) => new Promise((resolve) => el.addEventListener(type, resolve, { once: true }));
-
 // Slow but universal path: play the video silently and record what the browser decodes.
 let captureJob = null;
 function captureAudioByPlayback() {
   captureJob ??= (async () => {
     const a = ensureAudio();
-    await a.ctx.resume();
+    const resumed = a.ctx.resume();
     const proc = a.ctx.createScriptProcessor(4096, 1, 1);
     const sink = a.ctx.createGain();
     sink.gain.value = 0;
@@ -643,17 +678,17 @@ function captureAudioByPlayback() {
     }, 250);
     try {
       video.pause();
-      if (video.currentTime !== 0) {
-        video.currentTime = 0;
-        await once(video, "seeked");
-      }
+      if (video.currentTime !== 0) video.currentTime = 0;
       const finished = new Promise((resolve, reject) => {
         video.addEventListener("ended", resolve, { once: true });
         video.addEventListener("pause", () => {
           if (!video.ended) reject(new Error("Reading the audio was interrupted — keep this tab open and try again."));
         }, { once: true });
       });
-      await video.play();
+      // Samples are only kept once the seek back to the start has finished (see onaudioprocess).
+      const playing = video.play();
+      await resumed;
+      await playing;
       await finished;
     } finally {
       clearInterval(timer);
@@ -727,6 +762,7 @@ async function transcribe() {
     return;
   }
   btn.disabled = true;
+  markBusy("transcribing");
   worker ??= new Worker(new URL("./transcribe-worker.js", import.meta.url), { type: "module" });
   $("#txStatus").textContent = "Starting…";
   setProgress("#txProgress", 0);
@@ -761,16 +797,25 @@ async function transcribe() {
       $("#txStatus").textContent = words.length ? `${words.length} words transcribed.` : "No speech found.";
       btn.disabled = false;
       btn.textContent = "Regenerate captions";
+      markBusy(null);
     } else if (data.type === "error") {
       setProgress("#txProgress", null);
       $("#txStatus").textContent = "";
       toast(`Transcription failed: ${data.message}`, true);
       btn.disabled = false;
+      markBusy(null);
     }
   };
   const audioCopy = pcm.slice();
   worker.postMessage(
-    { type: "transcribe", audio: audioCopy, model: $("#model").value, language: $("#language").value || null },
+    {
+      type: "transcribe",
+      audio: audioCopy,
+      model: $("#model").value,
+      language: $("#language").value || null,
+      // The phone GPU path needs much more memory than the CPU path.
+      allowGpu: !IS_MOBILE,
+    },
     [audioCopy.buffer],
   );
 }
@@ -1350,6 +1395,17 @@ dialog.addEventListener("close", () => {
 window.addEventListener("beforeunload", (e) => {
   if (state.exporting) e.preventDefault();
 });
+
+if (IS_MOBILE) {
+  $("#model").value = "Xenova/whisper-tiny";
+  $("#modelHint").hidden = false;
+}
+const crashed = crashedTask();
+if (crashed) {
+  markBusy(null);
+  $("#crashNotice").hidden = false;
+  if (IS_MOBILE) $("#model").value = "Xenova/whisper-tiny";
+}
 
 document.fonts.load('900 40px "Montserrat"');
 updateButtons();
