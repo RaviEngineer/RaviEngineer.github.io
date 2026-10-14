@@ -6,7 +6,8 @@ env.allowLocalModels = false;
 let asr = null;
 let loadedKey = "";
 
-async function pickDevice() {
+async function pickDevice(allowGpu) {
+  if (!allowGpu) return "wasm";
   try {
     if (navigator.gpu && (await navigator.gpu.requestAdapter())) return "webgpu";
   } catch {
@@ -15,18 +16,24 @@ async function pickDevice() {
   return "wasm";
 }
 
+// Xenova/* repos ship fp32 and 8-bit weights; onnx-community/* repos also ship 4-bit.
+function dtypeFor(model, device) {
+  if (device !== "webgpu") return "q8";
+  return model.startsWith("Xenova/") ? "fp32" : { encoder_model: "fp32", decoder_model_merged: "q4" };
+}
+
 self.onmessage = async (event) => {
-  const { type, audio, model, language } = event.data;
+  const { type, audio, model, language, allowGpu } = event.data;
   if (type !== "transcribe") return;
 
   try {
-    const device = await pickDevice();
+    const device = await pickDevice(allowGpu);
     const key = `${model}|${device}`;
     if (!asr || loadedKey !== key) {
       self.postMessage({ type: "status", message: "Loading speech model…" });
       asr = await pipeline("automatic-speech-recognition", model, {
         device,
-        dtype: device === "webgpu" ? { encoder_model: "fp32", decoder_model_merged: "q4" } : "q8",
+        dtype: dtypeFor(model, device),
         progress_callback: (p) => self.postMessage({ type: "progress", data: p }),
       });
       loadedKey = key;

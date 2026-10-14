@@ -170,7 +170,7 @@
         <div class="grid2">
           <label class="field"><span>Model</span>
             <select id="model">
-              <option value="onnx-community/whisper-tiny_timestamped">Fast (tiny, ~40 MB)</option>
+              <option value="Xenova/whisper-tiny">Fast (tiny, ~40 MB)</option>
               <option value="onnx-community/whisper-base_timestamped" selected>Accurate (base, ~80 MB)</option>
             </select>
           </label>
@@ -190,6 +190,8 @@
             </select>
           </label>
         </div>
+        <p class="hint" id="modelHint" hidden style="margin:-4px 0 10px">On phones, Fast is recommended — Accurate can run out of memory. Clips under 2 minutes work best.</p>
+        <div class="notice" id="crashNotice" hidden style="margin-bottom:10px">The page reloaded unexpectedly last time — most likely your browser ran out of memory. Try the <b>Fast</b> model and a shorter clip (under 2 minutes), or use a computer for long videos.</div>
         <button class="btn primary block" id="transcribeBtn" disabled>Generate captions</button>
         <div class="progress" id="txProgress"><i></i></div>
         <div class="status" id="txStatus"></div>
