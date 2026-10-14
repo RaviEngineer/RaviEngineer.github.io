@@ -33,6 +33,7 @@ const state = {
   dub: null, // { buffer, language }
   dubOn: true,
   exporting: false,
+  capturing: false, // true while reading audio by playing the video
   clickMode: "seek",
   style: {
     preset: "pop", font: "Montserrat", wordsPerPage: 3, size: 72, posY: 72, uppercase: true,
@@ -402,7 +403,7 @@ function drawFrame() {
 
 /* ---------- Playback ---------- */
 
-let audio = null; // { ctx, origGain, dubGain, recordDest }
+let audio = null; // { ctx, source, origGain, dubGain, speakers, recordDest }
 function ensureAudio() {
   if (audio) return audio;
   const ac = new AudioContext();
@@ -410,12 +411,13 @@ function ensureAudio() {
   const origGain = ac.createGain();
   const dubGain = ac.createGain();
   const master = ac.createGain();
+  const speakers = ac.createGain();
   const recordDest = ac.createMediaStreamDestination();
   source.connect(origGain).connect(master);
   dubGain.connect(master);
-  master.connect(ac.destination);
+  master.connect(speakers).connect(ac.destination);
   master.connect(recordDest);
-  audio = { ctx: ac, origGain, dubGain, recordDest };
+  audio = { ctx: ac, source, origGain, dubGain, speakers, recordDest };
   applyMix();
   return audio;
 }
@@ -441,7 +443,7 @@ function stopDub() {
 }
 function startDub() {
   stopDub();
-  if (!dubActive() || video.paused || !audio) return;
+  if (!dubActive() || video.paused || !audio || state.capturing) return;
   dubSource = audio.ctx.createBufferSource();
   dubSource.buffer = state.dub.buffer;
   dubSource.connect(audio.dubGain);
@@ -467,7 +469,7 @@ video.addEventListener("ended", finishPlayback);
 
 // Skip over cut sections while playing.
 function enforceCuts() {
-  if (video.paused || video.seeking) return;
+  if (video.paused || video.seeking || state.capturing) return;
   const cut = cutAt(video.currentTime);
   if (!cut) return;
   if (cut[1] >= state.duration - 0.05) {
@@ -480,7 +482,7 @@ function enforceCuts() {
 video.addEventListener("timeupdate", enforceCuts);
 
 async function togglePlay() {
-  if (!state.duration || state.exporting) return;
+  if (!state.duration || state.exporting || state.capturing) return;
   ensureAudio();
   await audio.ctx.resume();
   if (video.paused) {
@@ -525,7 +527,7 @@ function renderTimeline() {
   }
 }
 $("#timeline").addEventListener("click", (e) => {
-  if (!state.duration || state.exporting) return;
+  if (!state.duration || state.exporting || state.capturing) return;
   const rect = e.currentTarget.getBoundingClientRect();
   video.currentTime = clamp(((e.clientX - rect.left) / rect.width) * state.duration, 0, state.duration - 0.01);
 });
@@ -533,6 +535,7 @@ $("#timeline").addEventListener("click", (e) => {
 /* ---------- Loading a video ---------- */
 
 async function loadFile(file) {
+  if (state.exporting || state.capturing) return;
   if (!file || !file.type.startsWith("video/")) {
     toast("Please choose a video file.", true);
     return;
@@ -567,14 +570,125 @@ async function loadFile(file) {
   renderTimeline();
   renderWords();
   updateButtons();
+  readAudio(file);
+}
 
-  try {
-    state.pcm = await decodeAudio(file);
-    if (state.trim.silence) onCutsChanged();
-  } catch {
-    $("#txStatus").textContent = "No audio track found — captions need speech.";
+function withTimeout(promise, ms) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error("timed out")), ms)),
+  ]);
+}
+
+// Fast path: decode the whole file at once. Some formats (e.g. iPhone .mov) or very large
+// files make this fail or hang, so it never blocks anything — ensurePcm() falls back.
+let audioJob = null;
+function readAudio(file) {
+  $("#txStatus").textContent = "Reading audio from your video…";
+  const promise = withTimeout(decodeAudio(file), Math.max(45000, state.duration * 1000))
+    .then((pcm) => {
+      if (state.file === file) {
+        state.pcm = pcm;
+        $("#txStatus").textContent = "";
+        if (state.trim.silence) onCutsChanged();
+      }
+      return pcm;
+    })
+    .catch((err) => {
+      console.warn("Quick audio decode failed; will read audio by playing the video instead.", err);
+      if (state.file === file) $("#txStatus").textContent = "";
+      return null;
+    });
+  audioJob = { file, promise };
+}
+
+async function ensurePcm() {
+  if (state.pcm) return state.pcm;
+  const file = state.file;
+  if (audioJob?.file === file) {
+    $("#txStatus").textContent = "Reading audio from your video…";
+    const pcm = await audioJob.promise;
+    if (pcm) return pcm;
   }
-  updateButtons();
+  if (state.file !== file) return null;
+  const pcm = await captureAudioByPlayback();
+  if (state.file === file) state.pcm = pcm;
+  return pcm;
+}
+
+const once = (el, type) => new Promise((resolve) => el.addEventListener(type, resolve, { once: true }));
+
+// Slow but universal path: play the video silently and record what the browser decodes.
+let captureJob = null;
+function captureAudioByPlayback() {
+  captureJob ??= (async () => {
+    const a = ensureAudio();
+    await a.ctx.resume();
+    const proc = a.ctx.createScriptProcessor(4096, 1, 1);
+    const sink = a.ctx.createGain();
+    sink.gain.value = 0;
+    const chunks = [];
+    proc.onaudioprocess = (e) => {
+      if (!video.paused && !video.seeking) chunks.push(new Float32Array(e.inputBuffer.getChannelData(0)));
+    };
+    a.source.connect(proc);
+    proc.connect(sink).connect(a.ctx.destination);
+    a.speakers.gain.value = 0;
+    state.capturing = true;
+    updateButtons();
+    setProgress("#txProgress", 0);
+    const timer = setInterval(() => {
+      setProgress("#txProgress", video.currentTime / state.duration);
+      $("#txStatus").textContent = `Reading audio (plays the video silently)… ${fmt(video.currentTime)} / ${fmt(state.duration)}`;
+    }, 250);
+    try {
+      video.pause();
+      if (video.currentTime !== 0) {
+        video.currentTime = 0;
+        await once(video, "seeked");
+      }
+      const finished = new Promise((resolve, reject) => {
+        video.addEventListener("ended", resolve, { once: true });
+        video.addEventListener("pause", () => {
+          if (!video.ended) reject(new Error("Reading the audio was interrupted — keep this tab open and try again."));
+        }, { once: true });
+      });
+      await video.play();
+      await finished;
+    } finally {
+      clearInterval(timer);
+      a.source.disconnect(proc);
+      proc.disconnect();
+      sink.disconnect();
+      a.speakers.gain.value = 1;
+      state.capturing = false;
+      setProgress("#txProgress", null);
+      $("#txStatus").textContent = "";
+      updateButtons();
+    }
+
+    const length = chunks.reduce((n, c) => n + c.length, 0);
+    if (!length) throw new Error("No audio could be read from this video.");
+    const buffer = new AudioBuffer({ length, numberOfChannels: 1, sampleRate: a.ctx.sampleRate });
+    let offset = 0;
+    for (const c of chunks) {
+      buffer.copyToChannel(c, 0, offset);
+      offset += c.length;
+    }
+    const offline = new OfflineAudioContext(1, Math.ceil((length / a.ctx.sampleRate) * 16000), 16000);
+    const src = offline.createBufferSource();
+    src.buffer = buffer;
+    src.connect(offline.destination);
+    src.start();
+    const pcm = (await offline.startRendering()).getChannelData(0);
+    let peak = 0;
+    for (let i = 0; i < pcm.length; i += 8) peak = Math.max(peak, Math.abs(pcm[i]));
+    if (peak < 1e-4) throw new Error("This video seems to have no sound.");
+    return pcm;
+  })().finally(() => {
+    captureJob = null;
+  });
+  return captureJob;
 }
 
 async function decodeAudio(file) {
@@ -597,11 +711,23 @@ async function decodeAudio(file) {
 /* ---------- Transcription ---------- */
 
 let worker = null;
-function transcribe() {
-  if (!state.pcm) return;
-  worker ??= new Worker(new URL("./transcribe-worker.js", import.meta.url), { type: "module" });
+async function transcribe() {
   const btn = $("#transcribeBtn");
   btn.disabled = true;
+  let pcm;
+  try {
+    pcm = await ensurePcm();
+  } catch (err) {
+    toast(`Couldn't read the audio: ${err.message}`, true);
+    updateButtons();
+    return;
+  }
+  if (!pcm) {
+    updateButtons();
+    return;
+  }
+  btn.disabled = true;
+  worker ??= new Worker(new URL("./transcribe-worker.js", import.meta.url), { type: "module" });
   $("#txStatus").textContent = "Starting…";
   setProgress("#txProgress", 0);
   const files = new Map();
@@ -642,7 +768,7 @@ function transcribe() {
       btn.disabled = false;
     }
   };
-  const audioCopy = state.pcm.slice();
+  const audioCopy = pcm.slice();
   worker.postMessage(
     { type: "transcribe", audio: audioCopy, model: $("#model").value, language: $("#language").value || null },
     [audioCopy.buffer],
@@ -1052,8 +1178,8 @@ function downloadSrt() {
 function updateButtons() {
   const hasVideo = Boolean(state.duration);
   const hasWords = state.words.length > 0;
-  const busy = state.exporting;
-  $("#transcribeBtn").disabled = !state.pcm || busy;
+  const busy = state.exporting || state.capturing;
+  $("#transcribeBtn").disabled = !hasVideo || busy;
   $("#translateBtn").disabled = !hasWords || busy;
   $("#insightsBtn").disabled = !hasWords || busy;
   $("#dubBtn").disabled = !hasWords || busy;
@@ -1098,9 +1224,17 @@ $("#presets").addEventListener("click", (e) => {
   document.fonts.load(`900 40px "${state.style.font}"`);
 });
 
-$("#cutSilence").addEventListener("change", (e) => {
+$("#cutSilence").addEventListener("change", async (e) => {
   state.trim.silence = e.target.checked;
-  if (e.target.checked && !state.pcm) toast("Still reading the audio — try again in a moment.", true);
+  if (state.trim.silence && !state.pcm && state.duration) {
+    try {
+      await ensurePcm();
+    } catch (err) {
+      toast(`Couldn't read the audio: ${err.message}`, true);
+      e.target.checked = false;
+      state.trim.silence = false;
+    }
+  }
   onCutsChanged();
 });
 $("#cutFillers").addEventListener("change", (e) => {
@@ -1157,7 +1291,7 @@ dz.addEventListener("drop", (e) => {
   loadFile(e.dataTransfer.files[0]).catch(() => {});
 });
 $("#newBtn").addEventListener("click", () => {
-  if (state.exporting) return;
+  if (state.exporting || state.capturing) return;
   $("#fileInput").value = "";
   $("#fileInput").click();
 });
